@@ -12,6 +12,7 @@ public class UserMenu extends MenuTemplate {
         System.out.println("0 - Voltar");
         System.out.println("1 - Listar");
         System.out.println("2 - Adicionar Novo");
+        System.out.println("3 - Deletar Usuário");
         System.out.println("Digite o número de uma opção acima:");
         optionChosen = input.nextInt();
 
@@ -23,6 +24,9 @@ public class UserMenu extends MenuTemplate {
                 break;
             case 2:
                 UserController.createUser();
+                break;
+            case 3:
+                UserController.deleteUser();
                 break;
             default:
                 System.out.println("Opção inválida");

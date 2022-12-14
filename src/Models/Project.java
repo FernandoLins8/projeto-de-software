@@ -134,16 +134,12 @@ public class Project {
         }
     }
 
-    public void removeUserById(int userId) {
-        Optional<User> user = this.associatedUsers.stream().filter(u -> u.getId() == userId).findFirst();
-
-        if(!user.isPresent()) {
-            System.out.println("Usuário não encontrado");
-            return;
-        }
-
+    public void removeUser(User user) {
         this.associatedUsers.remove(user);
-        System.out.println("Usuário removido");
+
+        if(user == this.coordinator) {
+            this.coordinator = null;
+        }
     }
 
     public void listActivities() {
@@ -154,16 +150,8 @@ public class Project {
         this.activities.add(activity);
     }
 
-    public void removeActivityById(int activityId) {
-        Optional<Activity> activity = this.activities.stream().filter(e -> e.getId() == activityId).findFirst();
-
-        if(!activity.isPresent()) {
-            System.out.println("Atividade não encontrada");
-            return;
-        }
-
+    public void removeActivity(Activity activity) {
         this.activities.remove(activity);
-        System.out.println("Atividade removida");
     }
 
     public boolean hasActivity(int activityId) {
@@ -175,5 +163,16 @@ public class Project {
         }
 
         return false;
+    }
+
+    public void delete() {
+        projectList.remove(this);
+
+        this.coordinator = null;
+        this.associatedUsers.forEach(user -> user.removeProject(this));
+        this.associatedUsers = null;
+
+        this.activities.forEach(activity -> activity.removeAssociations());
+        this.activities = null;
     }
 }

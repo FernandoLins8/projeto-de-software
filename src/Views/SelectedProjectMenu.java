@@ -1,5 +1,6 @@
 package Views;
 
+import Controllers.ProjectController;
 import Models.Project;
 
 import java.util.Scanner;
@@ -19,6 +20,7 @@ public class SelectedProjectMenu {
             System.out.println("1 - Editar");
             System.out.println("2 - Atividades");
             System.out.println("3 - Associados ao Projeto");
+            System.out.println("4 - Deletar este Projeto");
             System.out.println("Digite o número de uma opção acima:");
             optionChosen = input.nextInt();
 
@@ -34,6 +36,8 @@ public class SelectedProjectMenu {
                 case 3:
                     ProjectUsersMenu.render(project);
                     break;
+                case 4:
+                    ProjectController.deleteProject(project);
                 default:
                     System.out.println("Opção inválida.");
             }

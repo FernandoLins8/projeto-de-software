@@ -55,6 +55,7 @@ public class TaskController {
                 Optional<Task> task = a.getTasks().stream().filter(t -> t.getId() == taskId).findFirst();
 
                 if(task.isPresent()) {
+                    activity.get().removeTask(task.get());
                     System.out.println("Tarefa removida.");
                 } else {
                     System.out.println("Tarefa não encontrada.");
@@ -83,6 +84,7 @@ public class TaskController {
                     if(user.isPresent()) {
                         task.get().assignUser(user.get());
                         activity.get().addProfessional(user.get());
+                        user.get().addTask(task.get());
                         System.out.println("Tarefa associada ao usuário");
                     } else {
                         System.out.println("Usuário não encontrado");
@@ -103,15 +105,12 @@ public class TaskController {
         int taskId = input.nextInt();
 
         Optional<Task> task = activity.get().getTask(taskId);
+
         if(!task.isPresent()) {
             System.out.println("Tarefa não encontrada");
         }
 
-        User removedUser = task.get().removeUser();
-//        if(removedUser != null) {
-//            removedUser.removeTask(task.get());
-//        }
-
+        task.get().removeUser();
         System.out.println("Usuário removido da tarefa.");
     }
 }

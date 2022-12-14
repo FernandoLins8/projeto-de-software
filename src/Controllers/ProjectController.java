@@ -118,14 +118,26 @@ public class ProjectController {
             return;
         }
 
-        project.removeUserById(userId);
-        user.get().removeProject(project);
-
+        project.removeUser(user.get());
         System.out.println("Usuário removido.");
     }
 
     static public Optional<Project> getProject(int projectId) {
         Optional<Project> project = Project.getProjectList().stream().filter(e -> e.getId() == projectId).findFirst();
         return project;
+    }
+
+    static public void deleteProject(Project project) {
+        Scanner input = new Scanner(System.in);
+        System.out.println("O projeto inteiro será removido. Tem certeza?");
+        System.out.println("Digite 1 para confirmar ou 0 para voltar atrás:");
+
+        if(input.nextInt() == 1) {
+            project.delete();
+            System.out.println("Projeto removido com sucesso.");
+            return;
+        }
+
+        System.out.println("Projeto não deletado.");
     }
 }

@@ -14,12 +14,6 @@ public class Task {
         this.description = description;
     }
 
-    public Task(String description, User assignedUser) {
-        id = taskCounter++;
-        this.description = description;
-        this.assignedUser = assignedUser;
-    }
-
     public String toString() {
         return String.format(
             "id.: %d | %s | %s",
@@ -39,13 +33,14 @@ public class Task {
 
     public void assignUser(User user) {
         this.assignedUser = user;
-        user.addTask(this);
     }
 
-    public User removeUser() {
-        User removedUser = this.assignedUser;
+    public void removeUser() {
         this.assignedUser = null;
+    }
 
-        return removedUser;
+    public void delete() {
+        this.assignedUser.removeTask(this);
+        this.assignedUser = null;
     }
 }

@@ -37,7 +37,8 @@ public class ActivityController {
         Activity newActivity = new Activity(
             description,
             startingDate,
-            endingDate
+            endingDate,
+            project
         );
 
         project.addActivity(newActivity);
@@ -67,12 +68,17 @@ public class ActivityController {
 //        }
 //    }
 
-    public static void removeActivity(int associatedProjectId, int activityId) {
-        Optional<Project> project = ProjectController.getProject(associatedProjectId);
+    public static void deleteActivity(Activity activity) {
+        Scanner input = new Scanner(System.in);
+        System.out.println("O objeto e todas as suas tarefas serão removidas. Tem certeza?");
+        System.out.println("Digite 1 para confirmar ou 0 para voltar atrás:");
 
-        if(project.isPresent()) {
-            project.get().removeActivityById(activityId);
-            System.out.println("Atividade removida");
+        if(input.nextInt() == 1) {
+            activity.deleteActivity();
+            System.out.println("Atividade removida com sucesso.");
+            return;
         }
+
+        System.out.println("Atividade não deletada.");
     }
 }

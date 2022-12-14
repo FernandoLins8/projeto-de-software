@@ -1,7 +1,11 @@
 package Views;
 
+import Controllers.ActivityController;
 import Controllers.TaskController;
+import Models.Activity;
+import Models.Project;
 
+import java.util.Optional;
 import java.util.Scanner;
 
 public class SelectedActivityMenu {
@@ -9,8 +13,10 @@ public class SelectedActivityMenu {
         Scanner input = new Scanner(System.in);
         int optionChosen = -1;
 
-        while(true) {
+        Project project = Project.getProject(projectId).get();
+        Activity activity = project.getActivity(activityId).get();
 
+        while(true) {
             System.out.println("#########################");
             System.out.println("Gerenciamento de Projetos");
             System.out.println("#########################");
@@ -25,6 +31,7 @@ public class SelectedActivityMenu {
             System.out.println("3 - Remover Tarefa");
             System.out.println("4 - Associar Usuário à Tarefa");
             System.out.println("5 - Remover Usuário de Tarefa");
+            System.out.println("6 - Deletar esta atividade");
             System.out.println("Digite o número de uma opção acima:");
             optionChosen = input.nextInt();
 
@@ -45,6 +52,10 @@ public class SelectedActivityMenu {
             }
             else if(optionChosen == 5) {
                 TaskController.remoUserFromTask(projectId, activityId);
+            }
+            else if(optionChosen == 6) {
+                ActivityController.deleteActivity(activity);
+                break;
             }
             else {
                 System.out.println("Opção inválida");

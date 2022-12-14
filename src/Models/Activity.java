@@ -9,50 +9,33 @@ public class Activity {
 
     private int id;
     private String description;
-    private Calendar startingDate;
-    private Calendar endingDate;
+    private Period activityDuration;
 
     private User responsible = null;
 
     private ArrayList<User> professionals = new ArrayList<User>();
     private ArrayList<Task> tasks = new ArrayList<Task>();
 
-    public Activity(String description, Calendar startingDate, Calendar endingDate) {
+    private Project projectIncluded;
+
+    public Activity(String description, Calendar startingDate, Calendar endingDate, Project projectIncluded) {
         this.id = ++activityCounter;
         this.description = description;
-        this.startingDate = startingDate;
-        this.endingDate = endingDate;
+        this.activityDuration = new Period(startingDate, endingDate);
+
+        this.projectIncluded = projectIncluded;
     }
 
     public int getId() {
         return this.id;
     }
 
-    public String getFormatedStartingDate() {
-        return String.format(
-                "%s/%s/%s",
-                this.startingDate.get(Calendar.DATE),
-                this.startingDate.get(Calendar.MONTH),
-                this.startingDate.get(Calendar.YEAR)
-        );
-    }
-
-    public String getFormatedEndingDate() {
-        return String.format(
-                "%s/%s/%s",
-                this.endingDate.get(Calendar.DATE),
-                this.endingDate.get(Calendar.MONTH),
-                this.endingDate.get(Calendar.YEAR)
-        );
-    }
-
     public String toString() {
         return String.format(
-            "Id.: %d | Description.: %s | Início.: %s | Término.: %s | Responsável.: %s",
+            "Id.: %d | Description.: %s | %s | Responsável.: %s",
             this.id,
             this.description,
-            this.getFormatedStartingDate(),
-            this.getFormatedEndingDate(),
+            this.activityDuration.toString(),
             this.responsible == null ? "-" : this.responsible.getName()
         );
     }
@@ -76,15 +59,12 @@ public class Activity {
         }
     }
 
-    public void removeProfessionalById(int professionalId) {
-        Optional<User> professional = this.professionals.stream().filter(p -> p.getId() == professionalId).findFirst();
-
-        if(!professional.isPresent()) {
-            System.out.println("Profissional não cadastrado na atividade ou não existe");
-            return;
-        }
-
+    public void removeProfessional(User professional) {
         this.professionals.remove(professional);
+
+        if(professional == this.responsible) {
+            this.responsible = null;
+        }
     }
 
     public void addOrUpdateResponsible(User responsible) {
@@ -92,6 +72,10 @@ public class Activity {
             professionals.add(responsible);
         }
         this.responsible = responsible;
+    }
+
+    public ArrayList<User> getProfessionals() {
+        return professionals;
     }
 
     public ArrayList<Task> getTasks() {
@@ -107,14 +91,28 @@ public class Activity {
         tasks.add(task);
     }
 
-    public void removeTaskById(int taskId) {
-        Optional<Task> task = this.tasks.stream().filter(e -> e.getId() == taskId).findFirst();
-
-        if(!task.isPresent()) {
-            System.out.println("Tarefa não encontrada");
-            return;
-        }
-
+    public void removeTask(Task task) {
         this.tasks.remove(task);
+        task.delete();
+    }
+
+    public void deleteActivity() {
+        this.projectIncluded.removeActivity(this);
+        this.removeAssociations();
+    }
+
+    public void removeAssociations() {
+        this.tasks.forEach(task -> {
+            task.removeUser();
+            if(task.assignedUser != null) {
+                task.assignedUser.removeTask(task);
+            }
+        });
+        this.tasks = null;
+
+        this.professionals.forEach(user -> {
+            user.removeActivity(this);
+        });
+        this.professionals = null;
     }
 }
